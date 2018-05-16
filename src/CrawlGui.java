@@ -28,12 +28,7 @@ public class CrawlGui extends javafx.application.Application {
 
     private CrawlGame loadGame(String filename) {
         Object[] map = MapIO.loadMap(filename);
-        if (map != null) {
-            Player player = (Player) map[0];
-            Room root = (Room) map[1];
-            return new CrawlGame(player, root);
-        }
-        return null;
+        return map != null ? new CrawlGame((Player) map[0], (Room) map[1]) : null;
     }
 
 }

@@ -98,19 +98,22 @@ public class CrawlView {
         dialog.getEditor().clear();
         dialog.getEditor().selectAll();
         Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            return(result.get());
+        return result.isPresent() ? result.get() : null;
+    }
+
+    private void refreshView () {
+        cartographer.drawMap();
+        if (game.isOver()) {
+            for (Button button : buttons.values()) {
+                button.setDisable(true);
+            }
         }
-
-        return null;
-
     }
 
     private class DrawHandler implements EventHandler<ActionEvent> {
 
         public void handle(ActionEvent event) {
-            String result;
-
+            String dialogResult;
             Button pressedButton = (Button) event.getSource();
 
             if (pressedButton == buttons.get("North")) {
@@ -129,32 +132,27 @@ public class CrawlView {
                 updateMessage(game.look());
 
             } else if (pressedButton == buttons.get("Examine")) {
-                result = showDialog("Examine what?");
-                updateMessage(game.examine(result));
+                dialogResult = showDialog("Examine what?");
+                updateMessage(game.examine(dialogResult));
 
             } else if (pressedButton == buttons.get("Drop")) {
-                result = showDialog("Item to drops?");
-                updateMessage(game.drop(result));
+                dialogResult = showDialog("Item to drops?");
+                updateMessage(game.drop(dialogResult));
 
             } else if (pressedButton == buttons.get("Take")) {
-                result = showDialog("Take what?");
-                game.take(result);
+                dialogResult = showDialog("Take what?");
+                game.take(dialogResult);
 
             } else if (pressedButton == buttons.get("Fight")) {
-                result = showDialog("Fight what?");
-                updateMessage(game.fight(result));
-
-                if (game.isOver()) {
-                    for (Button button : buttons.values()) {
-                        button.setDisable(true);
-                    }
-                }
+                dialogResult = showDialog("Fight what?");
+                updateMessage(game.fight(dialogResult));
 
             } else if (pressedButton == buttons.get("Save")) {
-                result = showDialog("Save filename?");
-                updateMessage(game.save(result));
+                dialogResult = showDialog("Save filename?");
+                updateMessage(game.save(dialogResult));
             }
-            cartographer.drawMap();
+
+            refreshView();
         }
     }
 }
