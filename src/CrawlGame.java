@@ -1,39 +1,33 @@
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
-public class CrawlGame extends MapWalker {
+public class CrawlGame {
 
-    private Room rootRoom, currentRoom;
-    private List<Room> rooms;
+    private Room currentRoom;
     private Player player;
     private boolean gameOver;
 
-    public CrawlGame(Player player, Room root) {
-        super(root);
-        this.rooms = new LinkedList<Room>();
-        this.player = player;
-        rootRoom = this.currentRoom = root;
-        currentRoom.enter(player);
+    public CrawlGame() {
         gameOver = false;
-
     }
 
-    @Override
-    public void visit(Room room) {
-        rooms.add(room);
-    }
-
-    public boolean isOver () {
-        return gameOver;
-    }
-
-    public Room getRootRoom() {
-        return rootRoom;
+    public boolean loadGame(String filename) {
+        Object[] map = MapIO.loadMap(filename);
+        if (map == null) {
+            return false;
+        }
+        player = (Player) map[0];
+        currentRoom = (Room) map[1];
+        currentRoom.enter(player);
+        return true;
     }
 
     public Room getCurrentRoom() {
         return currentRoom;
+    }
+
+    public boolean isOver () {
+        return gameOver;
     }
 
     public String goTo(String direction) {
