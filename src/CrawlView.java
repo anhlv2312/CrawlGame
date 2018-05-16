@@ -20,6 +20,7 @@ public class CrawlView {
     private BorderPane root;
     private TextArea message;
     private TextInputDialog dialog;
+    private Cartographer cartographer;
     private Map<String, Button> buttons;
 
     public CrawlView(CrawlGame game) {
@@ -36,14 +37,14 @@ public class CrawlView {
         dialog.setGraphic(null);
 
         buttons = new HashMap<>();
-        Canvas canvas = new Cartographer(game.getCurrentRoom());
+        cartographer = new Cartographer(game.getRootRoom());
 
 
-        root.setCenter(canvas);
+        root.setCenter(cartographer);
         root.setBottom(message);
         root.setRight(createButtons());
 
-        appendLine("You find yourself in " + game.getCurrentRoom().getDescription());
+        updateMessage("You find yourself in " + game.getCurrentRoom().getDescription());
     }
 
     public Scene getScene() {
@@ -83,19 +84,21 @@ public class CrawlView {
         return grid;
     }
 
-    private void appendLine(String line) {
+    private void updateMessage(String line) {
         if (line != null) {
             message.appendText(line + "\n");
         }
     }
 
-    private void appendLine(List<String> lines) {
+    private void updateMessage(List<String> lines) {
         for (String line : lines) {
             if (line != null) {
                 message.appendText(line + "\n");
             }
         }
+
     }
+
 
     private String showDialog(String title) {
         dialog.getEditor().clear();
@@ -108,44 +111,55 @@ public class CrawlView {
 
     }
 
-
     private class DrawHandler implements EventHandler<ActionEvent> {
 
         public void handle(ActionEvent event) {
+            String result;
+
             Button pressedButton = (Button) event.getSource();
-            String message = null;
-            List<String> messages = null;
+
             if (pressedButton == buttons.get("North")) {
-                message = game.goTo("North");
+                updateMessage(game.goTo("North"));
+
             } else if (pressedButton == buttons.get("East")) {
-                message = game.goTo("East");
+                updateMessage(game.goTo("East"));
+
             } else if (pressedButton == buttons.get("South")) {
-                message = game.goTo("South");
+                updateMessage(game.goTo("South"));
+
             } else if (pressedButton == buttons.get("West")) {
-                message = game.goTo("West");
+                updateMessage(game.goTo("West"));
+
             } else if (pressedButton == buttons.get("Look")) {
-                messages = game.look();
-                appendLine(messages);
+                updateMessage(game.look());
+
             } else if (pressedButton == buttons.get("Examine")) {
-                showDialog("Examine what?");
+                result = showDialog("Examine what?");
+                updateMessage(game.examine(result));
+
             } else if (pressedButton == buttons.get("Drop")) {
-                String result = showDialog("Item to drops?");
-                message = game.drop(result);
+                result = showDialog("Item to drops?");
+                updateMessage(game.drop(result));
+
             } else if (pressedButton == buttons.get("Take")) {
-                String result = showDialog("Take what?");
-                message = game.take(result);
+                result = showDialog("Take what?");
+                updateMessage(game.take(result));
+
             } else if (pressedButton == buttons.get("Fight")) {
-                String result = showDialog("Fight what?");
-                message = game.fight(result);
+                result = showDialog("Fight what?");
+                updateMessage(game.fight(result));
+
                 if (game.isOver()) {
                     for (Button button : buttons.values()) {
                         button.setDisable(true);
                     }
                 }
+
             } else if (pressedButton == buttons.get("Save")) {
-                showDialog("Save filename?");
+                result = showDialog("Save filename?");
+                updateMessage(game.save(result));
             }
-            appendLine(message);
+
         }
     }
 }

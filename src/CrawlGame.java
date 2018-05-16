@@ -4,7 +4,7 @@ import java.util.List;
 public class CrawlGame {
 
     private Player player;
-    private Room currentRoom;
+    private Room rootRoom, currentRoom;
     private boolean gameOver;
 
     public CrawlGame(Player player, Room root) {
@@ -16,6 +16,10 @@ public class CrawlGame {
 
     public Room getCurrentRoom() {
         return currentRoom;
+    }
+
+    public Room getRootRoom() {
+        return rootRoom;
     }
 
     public boolean isOver () {
@@ -68,6 +72,7 @@ public class CrawlGame {
         }
         return "Nothing found with that name";
     }
+
     public String drop(String name) {
         Thing thing = player.drop(name);
         if (thing != null) {
@@ -76,6 +81,7 @@ public class CrawlGame {
         }
         return "Nothing found with that name";
     }
+
     public String take(String name) {
         for (Thing thing : currentRoom.getContents()) {
             if (thing.getShortDescription().equals(name)) {
@@ -96,26 +102,24 @@ public class CrawlGame {
     }
 
     public String fight(String description) {
+        String message = null;
         for (Thing thing : currentRoom.getContents()) {
-            if (thing instanceof Critter) {
-                Critter critter = (Critter) thing;
-                if (critter.isAlive()) {
-                    player.fight(critter);
-                    if (player.isAlive()) {
-                        return "You won";
-                    } else {
-                        gameOver = true;
-                        return "Game over";
-                    }
-                }
+            if (thing instanceof Critter && ((Critter) thing).isAlive()) {
+                player.fight((Critter) thing);
+                gameOver = !player.isAlive();
+                message = gameOver ? "Game over" : "You won";
                 break;
             }
         }
-        return null;
+        return message;
     }
 
-    public void save() {
-
+    public String save(String filename) {
+        if (MapIO.saveMap(rootRoom, filename)) {
+            return "Saved";
+        } else {
+            return "Unable to save";
+        }
     }
 
 
