@@ -9,32 +9,35 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.StageStyle;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class CrawlView {
 
     private CrawlGame game;
-    private BorderPane root = new BorderPane();
+    private BorderPane root;
 
-    private TextArea message = new TextArea();
-    private TextInputDialog dialog = new TextInputDialog();
+    private TextArea message;
+    private TextInputDialog dialog;
+    private Map<String, Button> buttons;
 
-
-    private Button[] buttons;
-
-
-
-
-    public CrawlView (CrawlGame game) {
+    public CrawlView(CrawlGame game) {
 
         this.game = game;
+        root = new BorderPane();
+        message = new TextArea();
+        dialog = new TextInputDialog();
+        buttons = new HashMap<>();
 
         Canvas canvas = new Cartographer(game.getCurrentRoom());
 
         root.setCenter(canvas);
         root.setBottom(message);
         root.setRight(addGridPane());
+
+        addButtonHandler(new DrawHandler());
 
         message.setEditable(false);
 
@@ -50,169 +53,108 @@ public class CrawlView {
     }
 
 
+    private void addButtonHandler(EventHandler<ActionEvent> handler) {
+        for (Button button : buttons.values()) {
+            button.setOnAction(handler);
+        }
+    }
+
 
     private GridPane addGridPane() {
-
-        buttons = new Button[10];
-        for (int i = 0; i<buttons.length; i++) {
-            buttons[i] = new Button();
-        }
-        Button btnNorth   = new Button("North");
-        Button btnEast    = new Button("East");
-        Button btnSouth   = new Button("South");
-        Button btnWest    = new Button("West");
-        Button btnLook    = new Button("Look");
-        Button btnExamine = new Button("Examine");
-        Button btnDrop    = new Button("Drop");
-        Button btnTake    = new Button("Take");
-        Button btnFight   = new Button("Fight");
-        Button btnSave    = new Button("Save");
-
+        buttons.put("North", new Button("North"));
+        buttons.put("East", new Button("East"));
+        buttons.put("South", new Button("South"));
+        buttons.put("West", new Button("West"));
+        buttons.put("Look", new Button("Look"));
+        buttons.put("Examine", new Button("Examine"));
+        buttons.put("Drop", new Button("Drop"));
+        buttons.put("Take", new Button("Take"));
+        buttons.put("Fight", new Button("Fight"));
+        buttons.put("Save", new Button("Save"));
 
         GridPane grid = new GridPane();
 
-        btnNorth.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                btnExitClick("North");
-            }
-        });
-
-        btnEast.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                btnExitClick("East");
-            }
-        });
-
-        btnSouth.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                btnExitClick("South");
-            }
-        });
-
-        btnWest.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                btnExitClick("West");
-            }
-        });
-
-        btnLook.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                btnLookClick();
-            }
-        });
-
-        btnExamine.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                btnExamineClick();
-            }
-        });
-
-        btnDrop.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                btnDropClick();
-            }
-        });
-
-        btnTake.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                btnTakeClick();
-            }
-        });
-
-        btnFight.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                btnFightClick();
-            }
-        });
-
-        btnSave.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                btnSaveClick();
-            }
-        });
-
-        grid.add(btnNorth, 1, 0);
-        grid.add(btnEast, 2, 1);
-        grid.add(btnSouth, 1, 2);
-        grid.add(btnWest, 0, 1);
-        grid.add(btnLook, 0, 3);
-        grid.add(btnExamine, 1, 3, 2, 1);
-        grid.add(btnDrop, 0, 4);
-        grid.add(btnTake, 1, 4);
-        grid.add(btnFight, 0, 5);
-        grid.add(btnSave, 0, 6);
+        grid.add(buttons.get("North"), 1, 0);
+        grid.add(buttons.get("East"), 2, 1);
+        grid.add(buttons.get("South"), 1, 2);
+        grid.add(buttons.get("West"), 0, 1);
+        grid.add(buttons.get("Look"), 0, 3);
+        grid.add(buttons.get("Examine"), 1, 3, 2, 1);
+        grid.add(buttons.get("Drop"), 0, 4);
+        grid.add(buttons.get("Take"), 1, 4);
+        grid.add(buttons.get("Fight"), 0, 5);
+        grid.add(buttons.get("Save"), 0, 6);
 
         return grid;
     }
 
-    private void btnExitClick(String direction) {
-        appendLine(game.goTo(direction));
-    }
-
-    private void btnLookClick() {
-        appendLine(game.look());
-    }
-
-    private void btnExamineClick() {
-        dialog.setTitle("Examine what?");
-        Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            appendLine(game.examine(result.get()));
-        }
-    }
-
-    private void btnDropClick() {
-        dialog.setTitle("Item to drops?");
-        Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            appendLine(game.drop(result.get()));
-        }
-    }
-
-    private void btnTakeClick() {
-        dialog.setTitle("Take what?");
-        Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            appendLine(game.take(result.get()));
-        }
-    }
-
-    private void btnFightClick() {
-        dialog.setTitle("Fight what?");
-        Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            appendLine(game.fight(result.get()));
-        }
-        if (game.isOver()) {
-//            btnNorth.setDisable(true);
-//            btnEast.setDisable(true);
-//            btnSouth.setDisable(true);
-//            btnWest.setDisable(true);
-//            btnLook.setDisable(true);
-//            btnExamine.setDisable(true);
-//            btnDrop.setDisable(true);
-//            btnTake.setDisable(true);
-//            btnFight.setDisable(true);
-//            btnSave.setDisable(true);
-        }
-    }
-
-    private void btnSaveClick() {
-
-    }
-
-    public void appendLine(String line){
+    public void appendLine(String line) {
         if (line != null) {
             message.appendText(line + "\n");
         }
     }
 
-    public void appendLine(List<String> lines){
+    public void appendLine(List<String> lines) {
         for (String line : lines) {
             if (line != null) {
-                message.appendText(line+ "\n");
+                message.appendText(line + "\n");
             }
         }
     }
 
+    public void showDialog() {
+    }
+
+
+    private class DrawHandler implements EventHandler<ActionEvent> {
+
+        public void handle(ActionEvent event) {
+            Button pressedButton = (Button) event.getSource();
+
+            if (pressedButton == buttons.get("North")) {
+                appendLine(game.goTo("North"));
+            } else if (pressedButton == buttons.get("East")) {
+                appendLine(game.goTo("East"));
+            } else if (pressedButton == buttons.get("South")) {
+                appendLine(game.goTo("South"));
+            } else if (pressedButton == buttons.get("West")) {
+                appendLine(game.goTo("West"));
+            } else if (pressedButton == buttons.get("Look")) {
+                appendLine(game.look());
+            } else if (pressedButton == buttons.get("Examine")) {
+                dialog.setTitle("Examine what?");
+                Optional<String> result = dialog.showAndWait();
+                if (result.isPresent()) {
+                    appendLine(game.examine(result.get()));
+                }
+            } else if (pressedButton == buttons.get("Drop")) {
+                dialog.setTitle("Item to drops?");
+                Optional<String> result = dialog.showAndWait();
+                if (result.isPresent()) {
+                    appendLine(game.drop(result.get()));
+                }
+            } else if (pressedButton == buttons.get("Take")) {
+                dialog.setTitle("Take what?");
+                Optional<String> result = dialog.showAndWait();
+                if (result.isPresent()) {
+                    appendLine(game.take(result.get()));
+                }
+            } else if (pressedButton == buttons.get("Fight")) {
+                dialog.setTitle("Fight what?");
+                Optional<String> result = dialog.showAndWait();
+                if (result.isPresent()) {
+                    appendLine(game.fight(result.get()));
+                }
+                if (game.isOver()) {
+                    for (Button button : buttons.values()) {
+                        button.setDisable(true);
+                    }
+                }
+            } else if (pressedButton == buttons.get("Save")) {
+                showDialog();
+            }
+
+        }
+    }
 }
+

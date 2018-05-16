@@ -24,9 +24,8 @@ public class CrawlGui extends javafx.application.Application {
         }
         stage.setTitle("Crawl - Explore");
 
-
         CrawlView view = new CrawlView(game);
-
+        view. appendLine("You find yourself in " + game.getCurrentRoom().getDescription());
         stage.setScene(view.getScene());
         stage.show();
     }

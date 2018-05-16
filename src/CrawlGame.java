@@ -26,6 +26,14 @@ public class CrawlGame {
         return currentRoom;
     }
 
+    public void setCurrentRoom(Room currentRoom) {
+        this.currentRoom = currentRoom;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
     public boolean isOver () {
         return gameOver;
     }
@@ -88,7 +96,7 @@ public class CrawlGame {
         for (Thing thing : currentRoom.getContents()) {
             if (thing.getShortDescription().equals(name)) {
                 if (thing instanceof Player) {
-                    System.out.println("Cant take player");
+                    System.out.println("Cant take player()");
                     break;
                 } else if (thing instanceof Mob && ((Mob) thing).isAlive()) {
                     System.out.println("The mob is alive");
