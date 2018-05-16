@@ -1,49 +1,37 @@
-import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.event.ActionEvent;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.canvas.*;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.util.List;
+import java.util.Optional;
 
 public class CrawlGui extends javafx.application.Application {
 
     private CrawlGame game;
+    private TextArea message = new TextArea();;
+    TextInputDialog dialog = new TextInputDialog();
 
-    private Stage stage;
-    private Canvas canvas;
-    private Button btnNorth, btnEast, btnSouth, btnWest, btnLook, btnExamine, btnDrop, btnTake, btnFight, btnSave;
-
-    private TextArea textArea;
-
-
-    public GridPane addGridPane() {
+    private GridPane addGridPane() {
         GridPane grid = new GridPane();
 
-        btnNorth   = new Button("North");
-        btnEast    = new Button("East");
-        btnSouth   = new Button("South");
-        btnWest    = new Button("West");
-        btnLook    = new Button("Look");
-        btnExamine = new Button("Examine");
-        btnDrop    = new Button("Drop");
-        btnTake    = new Button("Take");
-        btnFight   = new Button("Fight");
-        btnSave    = new Button("Save");
+        Button btnNorth   = new Button("North");
+        Button btnEast    = new Button("East");
+        Button btnSouth   = new Button("South");
+        Button btnWest    = new Button("West");
+        Button btnLook    = new Button("Look");
+        Button btnExamine = new Button("Examine");
+        Button btnDrop    = new Button("Drop");
+        Button btnTake    = new Button("Take");
+        Button btnFight   = new Button("Fight");
+        Button btnSave    = new Button("Save");
 
         btnNorth.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e) {
@@ -119,32 +107,50 @@ public class CrawlGui extends javafx.application.Application {
         return grid;
     }
 
-    public void btnExitClick(String direction) {
-        String message = this.game.goTo(direction);
-        this.textArea.appendText(message);
+    private void btnExitClick(String direction) {
+        appendLine(game.goTo(direction));
     }
 
-    public void btnLookClick() {
-        this.textArea.appendText(this.game.look());
+    private void btnLookClick() {
+        appendLine(game.look());
     }
 
-    public void btnExamineClick() {
-
+    private void btnExamineClick() {
+        dialog.setTitle("Examine what?");
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            appendLine(game.examine(result.get()));
+        }
     }
 
-    public void btnDropClick() {
-
+    private void btnDropClick() {
+        dialog.setTitle("Item to drops?");
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            appendLine(game.drop(result.get()));
+        }
     }
 
-    public void btnTakeClick() {
-
+    private void btnTakeClick() {
+        dialog.setTitle("Take what?");
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            appendLine(game.take(result.get()));
+        }
     }
 
-    public void btnFightClick() {
+    private void btnFightClick() {
+        dialog.setTitle("Fight what?");
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            appendLine(game.fight(result.get()));
+        }
+        if (game.isOver()) {
 
+        }
     }
 
-    public void btnSaveClick() {
+    private void btnSaveClick() {
 
     }
 
@@ -166,21 +172,38 @@ public class CrawlGui extends javafx.application.Application {
         }
     }
 
+    private void appendLine(String line){
+        if (line != null) {
+            message.appendText(line + "\n");
+        }
+    }
+
+    private void appendLine(List<String> lines){
+        for (String line : lines) {
+            if (line != null) {
+                message.appendText(line+ "\n");
+            }
+        }
+    }
+
     public void start(Stage stage) {
         this.loadGame();
 
-        this.stage = stage;
-        this.stage.setTitle("Crawl - Explore");
+        stage.setTitle("Crawl - Explore");
+        Canvas canvas = new Cartographer(this.game.getCurrentRoom());
 
-        this.canvas = new Cartographer(this.game.getCurrentRoom());
+        message.setEditable(false);
+        message.appendText("You find yourself in " + this.game.getCurrentRoom().getDescription() + "\n");
 
-        this.textArea = new TextArea();
-        this.textArea.setEditable(false);
-        this.textArea.appendText("You find yourself in " + this.game.getCurrentRoom().getDescription() + "\n");
+        dialog.initStyle(StageStyle.UNIFIED);
+        dialog.setTitle(null);
+        dialog.setHeaderText(null);
+        dialog.setGraphic(null);
+
 
         BorderPane border = new BorderPane();
-        border.setCenter(this.canvas);
-        border.setBottom(this.textArea);
+        border.setCenter(canvas);
+        border.setBottom(message);
         border.setRight(addGridPane());
 
         Scene scene = new Scene(border);
