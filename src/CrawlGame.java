@@ -3,35 +3,19 @@ import java.util.List;
 
 public class CrawlGame {
 
-    private Room currentRoom;
     private Player player;
+    private Room currentRoom;
     private boolean gameOver;
 
-    public CrawlGame() {
+    public CrawlGame(Player player, Room root) {
+        this.player = player;
+        this.currentRoom = root;
         gameOver = false;
-    }
-
-    public boolean loadGame(String filename) {
-        Object[] map = MapIO.loadMap(filename);
-        if (map == null) {
-            return false;
-        }
-        player = (Player) map[0];
-        currentRoom = (Room) map[1];
         currentRoom.enter(player);
-        return true;
     }
 
     public Room getCurrentRoom() {
         return currentRoom;
-    }
-
-    public void setCurrentRoom(Room currentRoom) {
-        this.currentRoom = currentRoom;
-    }
-
-    public Player getPlayer() {
-        return player;
     }
 
     public boolean isOver () {

@@ -18,7 +18,6 @@ public class CrawlView {
 
     private CrawlGame game;
     private BorderPane root;
-
     private TextArea message;
     private TextInputDialog dialog;
     private Map<String, Button> buttons;
@@ -26,41 +25,34 @@ public class CrawlView {
     public CrawlView(CrawlGame game) {
 
         this.game = game;
+
         root = new BorderPane();
         message = new TextArea();
-        dialog = new TextInputDialog();
-        buttons = new HashMap<>();
+        message.setEditable(false);
 
+        dialog = new TextInputDialog();
+        dialog.initStyle(StageStyle.UNIFIED);
+        dialog.setHeaderText(null);
+        dialog.setGraphic(null);
+
+        buttons = new HashMap<>();
         Canvas canvas = new Cartographer(game.getCurrentRoom());
+
 
         root.setCenter(canvas);
         root.setBottom(message);
-        root.setRight(addGridPane());
+        root.setRight(createButtons());
 
-        addButtonHandler(new DrawHandler());
-
-        message.setEditable(false);
-
-
-        dialog.initStyle(StageStyle.UNIFIED);
-        dialog.setTitle(null);
-        dialog.setHeaderText(null);
-        dialog.setGraphic(null);
+        appendLine("You find yourself in " + game.getCurrentRoom().getDescription());
     }
 
     public Scene getScene() {
         return new Scene(root);
     }
 
+    private GridPane createButtons() {
+        GridPane grid = new GridPane();
 
-    private void addButtonHandler(EventHandler<ActionEvent> handler) {
-        for (Button button : buttons.values()) {
-            button.setOnAction(handler);
-        }
-    }
-
-
-    private GridPane addGridPane() {
         buttons.put("North", new Button("North"));
         buttons.put("East", new Button("East"));
         buttons.put("South", new Button("South"));
@@ -72,7 +64,10 @@ public class CrawlView {
         buttons.put("Fight", new Button("Fight"));
         buttons.put("Save", new Button("Save"));
 
-        GridPane grid = new GridPane();
+        DrawHandler handler = new DrawHandler();
+        for (Button button : buttons.values()) {
+            button.setOnAction(handler);
+        }
 
         grid.add(buttons.get("North"), 1, 0);
         grid.add(buttons.get("East"), 2, 1);
@@ -88,13 +83,13 @@ public class CrawlView {
         return grid;
     }
 
-    public void appendLine(String line) {
+    private void appendLine(String line) {
         if (line != null) {
             message.appendText(line + "\n");
         }
     }
 
-    public void appendLine(List<String> lines) {
+    private void appendLine(List<String> lines) {
         for (String line : lines) {
             if (line != null) {
                 message.appendText(line + "\n");
@@ -102,7 +97,15 @@ public class CrawlView {
         }
     }
 
-    public void showDialog() {
+    private String showDialog(String title) {
+        dialog.getEditor().clear();
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            return(result.get());
+        }
+
+        return null;
+
     }
 
 
@@ -110,50 +113,39 @@ public class CrawlView {
 
         public void handle(ActionEvent event) {
             Button pressedButton = (Button) event.getSource();
-
+            String message = null;
+            List<String> messages = null;
             if (pressedButton == buttons.get("North")) {
-                appendLine(game.goTo("North"));
+                message = game.goTo("North");
             } else if (pressedButton == buttons.get("East")) {
-                appendLine(game.goTo("East"));
+                message = game.goTo("East");
             } else if (pressedButton == buttons.get("South")) {
-                appendLine(game.goTo("South"));
+                message = game.goTo("South");
             } else if (pressedButton == buttons.get("West")) {
-                appendLine(game.goTo("West"));
+                message = game.goTo("West");
             } else if (pressedButton == buttons.get("Look")) {
-                appendLine(game.look());
+                messages = game.look();
+                appendLine(messages);
             } else if (pressedButton == buttons.get("Examine")) {
-                dialog.setTitle("Examine what?");
-                Optional<String> result = dialog.showAndWait();
-                if (result.isPresent()) {
-                    appendLine(game.examine(result.get()));
-                }
+                showDialog("Examine what?");
             } else if (pressedButton == buttons.get("Drop")) {
-                dialog.setTitle("Item to drops?");
-                Optional<String> result = dialog.showAndWait();
-                if (result.isPresent()) {
-                    appendLine(game.drop(result.get()));
-                }
+                String result = showDialog("Item to drops?");
+                message = game.drop(result);
             } else if (pressedButton == buttons.get("Take")) {
-                dialog.setTitle("Take what?");
-                Optional<String> result = dialog.showAndWait();
-                if (result.isPresent()) {
-                    appendLine(game.take(result.get()));
-                }
+                String result = showDialog("Take what?");
+                message = game.take(result);
             } else if (pressedButton == buttons.get("Fight")) {
-                dialog.setTitle("Fight what?");
-                Optional<String> result = dialog.showAndWait();
-                if (result.isPresent()) {
-                    appendLine(game.fight(result.get()));
-                }
+                String result = showDialog("Fight what?");
+                message = game.fight(result);
                 if (game.isOver()) {
                     for (Button button : buttons.values()) {
                         button.setDisable(true);
                     }
                 }
             } else if (pressedButton == buttons.get("Save")) {
-                showDialog();
+                showDialog("Save filename?");
             }
-
+            appendLine(message);
         }
     }
 }
