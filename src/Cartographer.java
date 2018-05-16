@@ -5,7 +5,7 @@ public class Cartographer extends javafx.scene.canvas.Canvas {
     }
 
     private void drawMap() {
-        this.setHeight(400);
-        this.setWidth(400);
+//        this.setHeight(400);
+//        this.setWidth(400);
     }
 }

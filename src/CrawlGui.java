@@ -107,8 +107,8 @@ public class CrawlGui extends javafx.application.Application {
 
         grid.add(btnNorth, 1, 0);
         grid.add(btnEast, 2, 1);
-        grid.add(btnSouth, 0, 1);
-        grid.add(btnWest, 1, 2);
+        grid.add(btnSouth, 1, 2);
+        grid.add(btnWest, 0, 1);
         grid.add(btnLook, 0, 3);
         grid.add(btnExamine, 1, 3, 2, 1);
         grid.add(btnDrop, 0, 4);
@@ -125,7 +125,7 @@ public class CrawlGui extends javafx.application.Application {
     }
 
     public void btnLookClick() {
-
+        this.textArea.appendText(this.game.look());
     }
 
     public void btnExamineClick() {
@@ -172,11 +172,11 @@ public class CrawlGui extends javafx.application.Application {
         this.stage = stage;
         this.stage.setTitle("Crawl - Explore");
 
-        this.canvas = new Cartographer(this.game.getRoot());
+        this.canvas = new Cartographer(this.game.getCurrentRoom());
 
         this.textArea = new TextArea();
         this.textArea.setEditable(false);
-        this.textArea.appendText("You find yourself in " + this.game.getRoot().getDescription() + "\n");
+        this.textArea.appendText("You find yourself in " + this.game.getCurrentRoom().getDescription() + "\n");
 
         BorderPane border = new BorderPane();
         border.setCenter(this.canvas);

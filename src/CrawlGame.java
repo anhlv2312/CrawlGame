@@ -3,7 +3,7 @@ import java.util.List;
 
 public class CrawlGame extends MapWalker {
 
-    private Room root;
+    private Room rootRoom, currentRoom;
     private List<Room> rooms;
     private Player player;
 
@@ -11,7 +11,8 @@ public class CrawlGame extends MapWalker {
         super(root);
         this.rooms = new LinkedList<Room>();
         this.player = player;
-        this.root = root;
+        this.rootRoom = this.currentRoom = root;
+        this.currentRoom.enter(player);
     }
 
     @Override
@@ -19,16 +20,31 @@ public class CrawlGame extends MapWalker {
         rooms.add(room);
     }
 
-    public Room getRoot() {
-        return root;
+    public Room getRootRoom() {
+        return rootRoom;
+    }
+
+    public Room getCurrentRoom() {
+        return currentRoom;
     }
 
     public String goTo(String direction) {
-        return "Something prevents you from leaving\n";
+        if (!currentRoom.getExits().keySet().contains(direction)) {
+            return "No door that way\n";
+        }
+
+        if (currentRoom.leave(player)) {
+            Room nextRoom = currentRoom.getExits().get(direction);
+            nextRoom.enter(player);
+            currentRoom = nextRoom;
+            return "You enter " + nextRoom.getDescription() + "\n";
+        } else {
+            return "Something prevents you from leaving\n";
+        }
     }
 
-    public String[] look() {
-        return null;
+    public String look() {
+        return currentRoom.getContents().toString();
     }
     public void examine() {
 
