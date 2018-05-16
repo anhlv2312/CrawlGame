@@ -1,0 +1,39 @@
+7
+the atrium2
+the hall
+the kitchen
+the library
+the library2
+the library3
+the library4
+1
+1 East
+2
+2 North
+0 West
+2
+3 North
+1 South
+2
+4 North
+2 South
+2
+5 North
+3 South
+2
+6 North
+4 South
+1
+5 South
+1
+E;50;Player;Worn out prospector type
+0
+2
+$;0.0;lump of coal
+$;1.0;copper coin
+2
+C;0.0;1;grid bug;Noone knows what this thing is
+$;-2.0;stale brownie
+0
+0
+0

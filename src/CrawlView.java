@@ -1,7 +1,6 @@
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
@@ -38,7 +37,6 @@ public class CrawlView {
 
         buttons = new HashMap<>();
         cartographer = new Cartographer(game.getRootRoom());
-
 
         root.setCenter(cartographer);
         root.setBottom(message);
@@ -92,16 +90,13 @@ public class CrawlView {
 
     private void updateMessage(List<String> lines) {
         for (String line : lines) {
-            if (line != null) {
-                message.appendText(line + "\n");
-            }
+            updateMessage(line);
         }
-
     }
-
 
     private String showDialog(String title) {
         dialog.getEditor().clear();
+        dialog.getEditor().selectAll();
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {
             return(result.get());
@@ -143,7 +138,7 @@ public class CrawlView {
 
             } else if (pressedButton == buttons.get("Take")) {
                 result = showDialog("Take what?");
-                updateMessage(game.take(result));
+                game.take(result);
 
             } else if (pressedButton == buttons.get("Fight")) {
                 result = showDialog("Fight what?");
@@ -159,7 +154,7 @@ public class CrawlView {
                 result = showDialog("Save filename?");
                 updateMessage(game.save(result));
             }
-
+            cartographer.drawMap();
         }
     }
 }

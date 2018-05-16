@@ -9,7 +9,7 @@ public class CrawlGame {
 
     public CrawlGame(Player player, Room root) {
         this.player = player;
-        this.currentRoom = root;
+        this.currentRoom = this.rootRoom = root;
         gameOver = false;
         currentRoom.enter(player);
     }
@@ -82,23 +82,18 @@ public class CrawlGame {
         return "Nothing found with that name";
     }
 
-    public String take(String name) {
+    public void take(String name) {
+        Thing item = null;
         for (Thing thing : currentRoom.getContents()) {
-            if (thing.getShortDescription().equals(name)) {
-                if (thing instanceof Player) {
-                    System.out.println("Cant take player()");
-                    break;
-                } else if (thing instanceof Mob && ((Mob) thing).isAlive()) {
-                    System.out.println("The mob is alive");
-                    break;
-                } else if (!currentRoom.leave(thing)) {
-                    System.out.println("Cant leave the room");
-                    break;
-                }
-                player.add(thing);
+            if (thing.getShortDescription().equals(name)
+                    && !(thing instanceof Player)
+                    && !((thing instanceof Mob) && ((Mob) thing).isAlive())) {
+                item = thing;
             }
         }
-        return null;
+        if (item != null && currentRoom.leave(item)) {
+            player.add(item);
+        }
     }
 
     public String fight(String description) {

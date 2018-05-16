@@ -15,16 +15,14 @@ public class CrawlGui extends javafx.application.Application {
         }
 
         CrawlGame game = loadGame(args.get(0));
-
         if (game == null) {
             System.err.println("Unable to load file");
             System.exit(2);
         }
 
         CrawlView view = new CrawlView(game);
-
-        stage.setTitle("Crawl - Explore");
         stage.setScene(view.getScene());
+        stage.setTitle("Crawl - Explore");
         stage.show();
     }
 
