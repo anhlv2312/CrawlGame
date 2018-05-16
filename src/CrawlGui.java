@@ -19,19 +19,19 @@ public class CrawlGui extends javafx.application.Application {
     private TextArea message = new TextArea();;
     TextInputDialog dialog = new TextInputDialog();
 
+    private Button btnNorth   = new Button("North");
+    private Button btnEast    = new Button("East");
+    private Button btnSouth   = new Button("South");
+    private Button btnWest    = new Button("West");
+    private Button btnLook    = new Button("Look");
+    private Button btnExamine = new Button("Examine");
+    private Button btnDrop    = new Button("Drop");
+    private Button btnTake    = new Button("Take");
+    private Button btnFight   = new Button("Fight");
+    private Button btnSave    = new Button("Save");
+
     private GridPane addGridPane() {
         GridPane grid = new GridPane();
-
-        Button btnNorth   = new Button("North");
-        Button btnEast    = new Button("East");
-        Button btnSouth   = new Button("South");
-        Button btnWest    = new Button("West");
-        Button btnLook    = new Button("Look");
-        Button btnExamine = new Button("Examine");
-        Button btnDrop    = new Button("Drop");
-        Button btnTake    = new Button("Take");
-        Button btnFight   = new Button("Fight");
-        Button btnSave    = new Button("Save");
 
         btnNorth.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e) {
@@ -146,7 +146,16 @@ public class CrawlGui extends javafx.application.Application {
             appendLine(game.fight(result.get()));
         }
         if (game.isOver()) {
-
+            btnNorth.setDisable(true);
+            btnEast.setDisable(true);
+            btnSouth.setDisable(true);
+            btnWest.setDisable(true);
+            btnLook.setDisable(true);
+            btnExamine.setDisable(true);
+            btnDrop.setDisable(true);
+            btnTake.setDisable(true);
+            btnFight.setDisable(true);
+            btnSave.setDisable(true);
         }
     }
 
