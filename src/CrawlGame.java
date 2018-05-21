@@ -99,7 +99,9 @@ public class CrawlGame {
     public String fight(String description) {
         String message = null;
         for (Thing thing : currentRoom.getContents()) {
-            if (thing instanceof Critter && ((Critter) thing).isAlive()) {
+            if (thing.getShortDescription().equals(description) &&
+                    thing instanceof Critter
+                    && ((Critter) thing).isAlive()) {
                 player.fight((Critter) thing);
                 gameOver = !player.isAlive();
                 message = gameOver ? "Game over" : "You won";

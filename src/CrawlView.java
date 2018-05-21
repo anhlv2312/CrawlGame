@@ -18,7 +18,6 @@ public class CrawlView {
     private CrawlGame game;
     private BorderPane root;
     private TextArea message;
-    private TextInputDialog dialog;
     private Cartographer cartographer;
     private Map<String, Button> buttons;
 
@@ -29,11 +28,6 @@ public class CrawlView {
         root = new BorderPane();
         message = new TextArea();
         message.setEditable(false);
-
-        dialog = new TextInputDialog();
-        dialog.initStyle(StageStyle.UNIFIED);
-        dialog.setHeaderText(null);
-        dialog.setGraphic(null);
 
         buttons = new HashMap<>();
         cartographer = new Cartographer(game.getRootRoom());
@@ -95,8 +89,11 @@ public class CrawlView {
     }
 
     private String showDialog(String title) {
-        dialog.getEditor().clear();
-        dialog.getEditor().selectAll();
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle(title);
+        dialog.initStyle(StageStyle.UNIFIED);
+        dialog.setHeaderText(null);
+        dialog.setGraphic(null);
         Optional<String> result = dialog.showAndWait();
         return result.isPresent() ? result.get() : null;
     }
