@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+
+// CrawlView Class represent UI of the game including message area, map and buttons
 public class CrawlView {
 
     private CrawlGame game;
@@ -25,27 +27,35 @@ public class CrawlView {
 
         this.game = game;
 
-        root = new BorderPane();
+        // Initial Message text area, set it non-editable
         message = new TextArea();
         message.setEditable(false);
 
+        // Initialize The Map of button name and button objects
         buttons = new HashMap<>();
+
+        // Initialize cartographer
         cartographer = new Cartographer(game.getRootRoom());
 
+        // Use border Pane as the root layout, and add UI elements to pane's area
+        root = new BorderPane();
         root.setCenter(cartographer);
         root.setBottom(message);
         root.setRight(createButtons());
 
-        updateMessage("You find yourself in " + game.getCurrentRoom().getDescription());
+        appendMessage("You find yourself in " + game.getCurrentRoom().getDescription());
     }
 
+    // Return the scene that is made of root layout
     public Scene getScene() {
         return new Scene(root);
     }
 
+    // Create a grid panel that contains all the control buttons
     private GridPane createButtons() {
         GridPane grid = new GridPane();
 
+        // Create new buttons and add them to the Map with their specific name
         buttons.put("North", new Button("North"));
         buttons.put("East", new Button("East"));
         buttons.put("South", new Button("South"));
@@ -57,11 +67,15 @@ public class CrawlView {
         buttons.put("Fight", new Button("Fight"));
         buttons.put("Save", new Button("Save"));
 
+        // Init event handler
         DrawHandler handler = new DrawHandler();
+
+        // Assign the event handler to all the button in Map
         for (Button button : buttons.values()) {
             button.setOnAction(handler);
         }
 
+        // Add all the buttons to grid pane
         grid.add(buttons.get("North"), 1, 0);
         grid.add(buttons.get("East"), 2, 1);
         grid.add(buttons.get("South"), 1, 2);
@@ -76,18 +90,21 @@ public class CrawlView {
         return grid;
     }
 
-    private void updateMessage(String line) {
+    // Append the given string to the message area
+    private void appendMessage(String line) {
         if (line != null) {
             message.appendText(line + "\n");
         }
     }
 
-    private void updateMessage(List<String> lines) {
+    // Append the given List of String to the message area
+    private void appendMessage(List<String> lines) {
         for (String line : lines) {
-            updateMessage(line);
+            appendMessage(line);
         }
     }
 
+    // Create a diaglog box and open it, return the value of the entered text
     private String showDialog(String title) {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle(title);
@@ -98,6 +115,7 @@ public class CrawlView {
         return result.isPresent() ? result.get() : null;
     }
 
+    // Refresh the UI, redraw the map and disable the button if the game is over
     private void refreshView () {
         cartographer.drawMap();
         if (game.isOver()) {
@@ -107,6 +125,8 @@ public class CrawlView {
         }
     }
 
+
+    // Private class DrawHandler that take care of all the button action
     private class DrawHandler implements EventHandler<ActionEvent> {
 
         public void handle(ActionEvent event) {
@@ -114,27 +134,27 @@ public class CrawlView {
             Button pressedButton = (Button) event.getSource();
 
             if (pressedButton == buttons.get("North")) {
-                updateMessage(game.goTo("North"));
+                appendMessage(game.goTo("North"));
 
             } else if (pressedButton == buttons.get("East")) {
-                updateMessage(game.goTo("East"));
+                appendMessage(game.goTo("East"));
 
             } else if (pressedButton == buttons.get("South")) {
-                updateMessage(game.goTo("South"));
+                appendMessage(game.goTo("South"));
 
             } else if (pressedButton == buttons.get("West")) {
-                updateMessage(game.goTo("West"));
+                appendMessage(game.goTo("West"));
 
             } else if (pressedButton == buttons.get("Look")) {
-                updateMessage(game.look());
+                appendMessage(game.look());
 
             } else if (pressedButton == buttons.get("Examine")) {
                 dialogResult = showDialog("Examine what?");
-                updateMessage(game.examine(dialogResult));
+                appendMessage(game.examine(dialogResult));
 
             } else if (pressedButton == buttons.get("Drop")) {
                 dialogResult = showDialog("Item to drops?");
-                updateMessage(game.drop(dialogResult));
+                appendMessage(game.drop(dialogResult));
 
             } else if (pressedButton == buttons.get("Take")) {
                 dialogResult = showDialog("Take what?");
@@ -142,11 +162,11 @@ public class CrawlView {
 
             } else if (pressedButton == buttons.get("Fight")) {
                 dialogResult = showDialog("Fight what?");
-                updateMessage(game.fight(dialogResult));
+                appendMessage(game.fight(dialogResult));
 
             } else if (pressedButton == buttons.get("Save")) {
                 dialogResult = showDialog("Save filename?");
-                updateMessage(game.save(dialogResult));
+                appendMessage(game.save(dialogResult));
             }
 
             refreshView();
