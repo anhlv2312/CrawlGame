@@ -40,7 +40,7 @@ public class CrawlGui extends javafx.application.Application {
 
         Object[] map = MapIO.loadMap(filename);
 
-        // if return Crawl Game if the map is loaded successfully, otherwise return null
+        // if return CrawlGame if the map is loaded successfully, otherwise return null
         return map != null ? new CrawlGame((Player) map[0], (Room) map[1]) : null;
     }
 
