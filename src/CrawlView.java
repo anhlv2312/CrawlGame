@@ -117,7 +117,9 @@ public class CrawlView {
 
     // Refresh the UI, redraw the map and disable the button if the game is over
     private void refreshView () {
+        // Redraw the map
         cartographer.drawMap();
+        // Disable button if the game is over
         if (game.isOver()) {
             for (Button button : buttons.values()) {
                 button.setDisable(true);
