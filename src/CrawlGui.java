@@ -1,12 +1,24 @@
 import javafx.stage.Stage;
 import java.util.List;
 
+/**
+ * CrawlGame Graphic User Interface
+ *
+ * @author Vu Anh LE
+ *
+ */
 public class CrawlGui extends javafx.application.Application {
 
+    /**
+     * Launch the App
+     */
     public static void main(String[] args) {
         launch(args);
     }
 
+    /**
+     * Start the App and show the stage
+     */
     public void start(Stage stage) {
 
         // Get the arguments from command line
@@ -27,15 +39,17 @@ public class CrawlGui extends javafx.application.Application {
 
         // Initialize the UI
         CrawlView view = new CrawlView(game);
-        stage.setScene(view.getScene());
+        stage.setScene(view);
 
         // Set the title of the application
         stage.setTitle("Crawl - Explore");
         stage.show();
     }
 
-    // Load game function from filename
-    // Return CrawGame object
+    /** Load game from a file an return the game data
+     * @param filename The name of the file to load data from
+     * @return the {@link CrawlGame CrawGame} object
+     */
     private CrawlGame loadGame(String filename) {
 
         Object[] map = MapIO.loadMap(filename);

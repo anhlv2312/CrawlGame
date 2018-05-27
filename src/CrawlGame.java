@@ -1,13 +1,23 @@
 import java.util.ArrayList;
 import java.util.List;
 
-// CrawlGame Class stores all the game information and handles player actions
+/**
+ * CrawlGame Class stores all the game information and handles player actions
+ *
+ * @author Vu Anh LE
+ *
+ */
 public class CrawlGame {
 
     private Player player;
     private Room rootRoom, currentRoom;
     private boolean gameOver;
 
+    /**
+     * Initialize CrawlGame
+     * @param player The player of the game
+     * @param root The root room of the game
+     */
     public CrawlGame(Player player, Room root) {
 
         // Load the player and root room of the game
@@ -21,25 +31,35 @@ public class CrawlGame {
         currentRoom.enter(player);
     }
 
-    // Get current room function
+    /**
+     * Get current room
+     * @return The room that player is currently in
+     */
     public Room getCurrentRoom() {
         return currentRoom;
     }
 
-    // Get root room function
+    /**
+     * Get root room
+     * @return the root room of the map
+     */
     public Room getRootRoom() {
         return rootRoom;
     }
 
-    // Get the game status
+    /**
+     * Get the game status
+     * @return true if the game is over, false otherwise
+     */
     public boolean isOver () {
         return gameOver;
     }
 
-
-    // Handle change room action
-    // Params: exitName: the name of the exit (North/East/South/West)
-    // Return: status message
+    /**
+     * Move to another room
+     * @param exitName  the name of the exit (North/East/South/West)
+     * @return the status message
+     */
     public String goTo(String exitName) {
         // if the direction does not exist
         if (!currentRoom.getExits().keySet().contains(exitName)) {
@@ -61,9 +81,10 @@ public class CrawlGame {
         }
     }
 
-
-    // Handle the look action
-    // Return: the list of strings including message and item list
+    /**
+     * Look around the room
+     * @return the list of strings including message and item list
+     */
     public List<String> look() {
         List<String> lines = new ArrayList<>();
 
@@ -90,9 +111,11 @@ public class CrawlGame {
         return lines;
     }
 
-    // Handle examine action
-    // Params: name: name of thing
-    // Return: status message
+    /**
+     * Examine the thing in room
+     * @param name Name of the thing to examine
+     * @return status message
+     */
     public String examine(String name) {
 
         // Check the items in player inventory first
@@ -113,9 +136,11 @@ public class CrawlGame {
         return "Nothing found with that name";
     }
 
-    // Handle drop action
-    // Params: name: name of thing
-    // Return: status message
+    /**
+     * Drop the thing in the player's inventory
+     * @param name Name of the thing to drop
+     * @return status message
+     */
     public String drop(String name) {
 
         // Get the item from player inventory
@@ -129,8 +154,10 @@ public class CrawlGame {
         return "Nothing found with that name";
     }
 
-    // Handle take action
-    // Params: name: name of thing
+    /**
+     * Take an item in the room
+     * @param name Name of the thing to take
+     */
     public void take(String name) {
         Thing item = null;
         for (Thing thing : currentRoom.getContents()) {
@@ -148,8 +175,11 @@ public class CrawlGame {
         }
     }
 
-    // Handle the fight action
-    // Params: description: the short description of the critter
+
+    /**
+     * Fight action
+     * @param description The short description of the critter
+     */
     public String fight(String description) {
         String message = null;
 
@@ -168,7 +198,10 @@ public class CrawlGame {
         return message;
     }
 
-    // Handle the save game action
+    /**
+     * Save action
+     * @param filename The name of the file to be saved to
+     */
     public String save(String filename) {
         if (MapIO.saveMap(rootRoom, filename)) {
             return "Saved";

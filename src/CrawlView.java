@@ -1,6 +1,5 @@
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
@@ -13,9 +12,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-
-// CrawlView Class represent UI of the game including message area, map and buttons
-public class CrawlView {
+/**
+ * CrawlView Class represent UI of the game including message area, map and buttons
+ *
+ * @author Vu Anh LE
+ *
+ */
+public class CrawlView extends javafx.scene.Scene  {
 
     private CrawlGame game;
     private BorderPane root;
@@ -23,8 +26,13 @@ public class CrawlView {
     private Cartographer cartographer;
     private Map<String, Button> buttons;
 
+    /**
+     * The view of a CrawlGame
+     * @param game The game object that need to be presented
+     */
     public CrawlView(CrawlGame game) {
-
+        super(new BorderPane());
+        this.root = (BorderPane)this.getRoot();
         this.game = game;
 
         // Initial Message text area, set it non-editable
@@ -38,20 +46,17 @@ public class CrawlView {
         cartographer = new Cartographer(game.getRootRoom());
 
         // Use border Pane as the root layout, and add UI elements to pane's area
-        root = new BorderPane();
         root.setCenter(cartographer);
         root.setBottom(message);
         root.setRight(createButtons());
 
         appendMessage("You find yourself in " + game.getCurrentRoom().getDescription());
+
     }
 
-    // Return the scene that is made of root layout
-    public Scene getScene() {
-        return new Scene(root);
-    }
-
-    // Create a grid panel that contains all the control buttons
+    /**
+     * Create a grid panel that contains all the control buttons
+     */
     private GridPane createButtons() {
         GridPane grid = new GridPane();
 
@@ -90,21 +95,27 @@ public class CrawlView {
         return grid;
     }
 
-    // Append the given string to the message area
+    /**
+     * Append the given string to the message area
+     */
     private void appendMessage(String line) {
         if (line != null) {
             message.appendText(line + "\n");
         }
     }
 
-    // Append the given List of String to the message area
+    /**
+     * Append the given List of String to the message area
+     */
     private void appendMessage(List<String> lines) {
         for (String line : lines) {
             appendMessage(line);
         }
     }
 
-    // Create a diaglog box and open it, return the value of the entered text
+    /**
+     * Create a diaglog box and open it, return the value of the entered text
+     */
     private String showDialog(String title) {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle(title);
@@ -115,10 +126,12 @@ public class CrawlView {
         return result.isPresent() ? result.get() : null;
     }
 
-    // Refresh the UI, redraw the map and disable the button if the game is over
-    private void refreshView () {
+    /**
+     * Refresh the UI, redraw the map and disable the button if the game is over
+     */
+    private void updateView() {
         // Redraw the map
-        cartographer.drawMap();
+        cartographer.update();
         // Disable button if the game is over
         if (game.isOver()) {
             for (Button button : buttons.values()) {
@@ -127,8 +140,9 @@ public class CrawlView {
         }
     }
 
-
-    // Private class DrawHandler that take care of all the button action
+    /**
+     * Private class DrawHandler that take care of all the button action
+     */
     private class DrawHandler implements EventHandler<ActionEvent> {
 
         public void handle(ActionEvent event) {
@@ -171,7 +185,7 @@ public class CrawlView {
                 appendMessage(game.save(dialogResult));
             }
 
-            refreshView();
+            updateView();
         }
     }
 }

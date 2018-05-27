@@ -2,6 +2,13 @@ import javafx.scene.canvas.GraphicsContext;
 import java.util.Map;
 import static java.lang.Math.abs;
 
+
+/**
+ * A class that extends Canvas to draw map
+ *
+ * @author Vu Anh LE
+ *
+ */
 public class Cartographer extends javafx.scene.canvas.Canvas {
 
     private Room root;
@@ -9,6 +16,10 @@ public class Cartographer extends javafx.scene.canvas.Canvas {
     private BoundsMapper bm;
     private int width, height, size, padding;
 
+    /**
+     * Cartographer - A Canvas Area.
+     * @param root The root room of the map
+     */
     public Cartographer(Room root) {
         this.root = root;
         bm = new BoundsMapper(root);
@@ -32,10 +43,13 @@ public class Cartographer extends javafx.scene.canvas.Canvas {
         // Initialize the Graphic Context
         gc = this.getGraphicsContext2D();
 
-        drawMap();
+        update();
     }
 
-    public void drawMap() {
+    /**
+     * Clear the current canvas and redraw the map
+     */
+    public void update() {
         // Clear the canvas
         gc.clearRect(0, 0, width, height);
 
@@ -45,6 +59,11 @@ public class Cartographer extends javafx.scene.canvas.Canvas {
         }
     }
 
+    /**
+     * Draw a particular room in the map
+     * @param room The root room of the map
+     * @param coord The coorodinate of the room
+     */
     private void drawRoom(Room room, Pair coord) {
 
         boolean hasPlayer, hasTreasure, hasAliveMob, hasDeadMob;
@@ -98,7 +117,12 @@ public class Cartographer extends javafx.scene.canvas.Canvas {
         }
     }
 
-    // Draw the exit of the room
+    /**
+     * Draw the exit of the room (a small stroke)
+     * @param x The x coordinate of the top left conner the room
+     * @param y The y coordinate of the top left conner the room
+     * @param direction The name of the Exit
+     */
     private void drawExit(int x, int y, String direction){
         // Check the direction if it is North, East, South or West
         switch (direction) {
